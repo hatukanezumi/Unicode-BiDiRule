@@ -1,0 +1,12 @@
+bidirule.c
+BiDiRule.xs
+Changes
+data/bidirule.pl
+lib/POD2/JA/Unicode/BiDiRule.pod
+lib/Unicode/BiDiRule.pm
+Makefile.PL
+MANIFEST
+ppport.h
+README
+t/00use.t
+t/pod.t
