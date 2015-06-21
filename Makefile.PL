@@ -10,6 +10,7 @@ WriteMakefile(
     CONFIGURE_REQUIRES => {
         'ExtUtils::MakeMaker' => '6.26',
         'Test::More'          => '0.45',
+        'Unicode::UCD'        => '0',
     },
     PREREQ_PM => {
         Exporter => '0',
@@ -17,10 +18,18 @@ WriteMakefile(
     },
     ABSTRACT_FROM => 'lib/Unicode/BiDiRule.pm',
     AUTHOR        => 'Hatuka*nezumi - IKEDA Soji <hatuka@nezumi.nu>',
+    LICENSE       => 'perl',
     LIBS          => [''],
     DEFINE        => '',
     INC           => '-I.',
     dist          => {PREOP => '$(MAKE) preop',},
+    META_MERGE    => {
+        resources => {
+            license => 'http://dev.perl.org/licenses/',
+            repository =>
+                'https://github.com/hatukanezumi/Unicode-BiDiRule/',
+        },
+    },
 );
 
 sub clean {
