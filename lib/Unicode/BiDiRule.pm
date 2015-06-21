@@ -8,11 +8,11 @@ require Exporter;
 
 our @ISA = qw(Exporter);
 
-our %EXPORT_TAGS = ( 'all' => [ qw(check LTR RTL DISALLOWED) ] );
+our %EXPORT_TAGS = ( 'all' => [ qw(check UNKNOWN LTR RTL DISALLOWED) ] );
 
 our @EXPORT_OK = @{$EXPORT_TAGS{'all'}};
 
-our $VERSION = '0.000_01';
+our $VERSION = '0.000_02';
 our $XS_VERSION = $VERSION;
 $VERSION = eval $VERSION;  # see L<perlmodstyle>
 
@@ -37,7 +37,7 @@ Unicode::BiDiRule - RFC 5893 BiDi Rule
 =head1 DESCRIPTION
 
 L<Unicode::BiDiRule> performs checking according to BiDi Rule described in
-RFC 5983.
+RFC 5893.
 
 Note that the word "UTF-8" in this document is used in its proper meaning.
 
@@ -125,15 +125,26 @@ determined.
 None by default.
 C<:all> tag exports check() and constants.
 
+=head1 RESTRICTIONS
+
+check() can not check Unicode string on EBCDIC platforms.
+
 =head1 CAVEATS
+
+=over
+
+=item *
 
 The repertoire and property values this module can provide are restricted by
 Unicode database of Perl core.
 Table below lists implemented Unicode version by each Perl version.
 
   Perl's version     Implemented Unicode version
-  ------------------ ---------------------------
-  5.8.7, 5.8.8       4.1.0
+  ------------------ ---------------------------------------
+  5.8.0              3.2.0
+  5.8.1 - 5.8.3      4.0.0
+  5.8.4 - 5.8.6      4.0.1
+  5.8.7 - 5.8.8      4.1.0
   5.10.0             5.0.0
   5.8.9, 5.10.1      5.1.0
   5.12.x             5.2.0
@@ -143,9 +154,13 @@ Table below lists implemented Unicode version by each Perl version.
   5.20.x             6.3.0
   5.22.x             7.0.0, correcting erratum at 2014-10-21
 
-=head1 RESTRICTIONS
+=item *
 
-check() can not check Unicode string on EBCDIC platforms.
+LDH labels, strings consisting of ASCII graphic characters only,
+may not satisfy BiDi Rule.
+They should be checked using another rule.
+
+=back
 
 =head1 SEE ALSO
 

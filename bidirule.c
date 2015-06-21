@@ -1,3 +1,16 @@
+/*
+ * Unicode-Precis-Preparation
+ *
+ * Copyright (C) 2015 by Hatuka*nezumi - IKEDA Soji
+ *
+ * This library is free software; you can redistribute it and/or modify it
+ * under the same terms as Perl itself. For more details, see the full text of
+ * the licenses at <http://dev.perl.org/licenses/>.
+ *
+ * This program is distributed in the hope that it will be
+ * useful, but without any warranty; without even the implied
+ * warranty of merchantability or fitness for a particular purpose.
+ */
 
 #include "EXTERN.h"
 #include "perl.h"
@@ -12,12 +25,15 @@ typedef enum {
     BDR_DISALLOWED		/* Others */
 } bidirule_prop_t;
 
+/* Line below is automatically generated.  Don't edit it manually. */
 #define BIDIRULE_BLKWIDTH
 
+/* Lines below are automatically generated.  Don't edit them manually. */
 static U16 bidirule_prop_index[] = {
 
 };
 
+/* Lines below are automatically generated.  Don't edit them manually. */
 static U8 bidirule_prop_array[] = {
 
 };
