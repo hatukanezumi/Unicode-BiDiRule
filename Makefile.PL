@@ -34,7 +34,7 @@ WriteMakefile(
 
 sub clean {
     my $inherited = shift->SUPER::clean(@_);
-    $inherited =~ s{(:+[ \t]*)}{$1clean-c };
+    $inherited =~ s/(:+[ \t]*)/${1}clean-c /;
     $inherited;
 }
 

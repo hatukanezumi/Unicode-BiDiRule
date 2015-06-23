@@ -2,7 +2,7 @@
 
 =head1 NAME
 
-Unicode::BiDiRule - RFC 5893 BiDi規則
+Unicode::BiDiRule~[ja] - RFC 5893 BiDi規則
 
 =head1 SYNOPSIS
 
@@ -40,8 +40,8 @@ UTF-8列として扱われることに注意。
 Returns:
 
 スカラコンテキストでは、
-規則を満たせば文字列の表示方向 (C<UNKNOWN> (C<0>)、C<LTR>、C<RTL>)。
-そうでなければC<undef>。
+規則を満たせば文字列の表示方向 (C<BIDIRULE_UNKNOWN>
+(C<0>)、C<BIDIRULE_LTR>、C<BIDIRULE_RTL>)。そうでなければC<undef>。
 
 配列コンテキストでは、
 次のキーを持つ対によるリストで結果の詳細を返す。
@@ -58,20 +58,26 @@ L</Constants>で述べる値のいずれか。
 成功したときは、文字列の長さ。
 
 オフセットや長さは、
-バイト文字列ではバイト数、ユニコード文字列では文字数で数える。
+バイト文字列ではバイト数、ユニコード文字列ではキャラクタ数で数える。
 
 =item C<length>
 
 検査が失敗したときの、認められない部分文字列の長さ。
 
 長さは、
-バイト文字列ではバイト数、ユニコード文字列では文字数で数える。
+バイト文字列ではバイト数、ユニコード文字列ではキャラクタ数で数える。
+不正な列では未定義となる。
 
 =item C<ord>
 
-C<length>がある場合、文字のユニコードスカラ値。
+C<length>がある場合、認められない部分文字列の最初のキャラクタのユニコードスカラ値。
 
 =back
+
+=item Unicode::BiDiRule::UnicodeVersion()
+
+ユニコード文字データベースの版を返す。これは
+Unicode::UCD::UnicodeVersion() と同じであるはずである。
 
 =back
 
@@ -79,16 +85,19 @@ C<length>がある場合、文字のユニコードスカラ値。
 
 =over
 
-=item C<UNKNOWN>
+=item C<BIDIRULE_UNKNOWN>
 
-=item C<LTR>
+=item C<BIDIRULE_LTR>
 
-=item C<RTL>
+=item C<BIDIRULE_RTL>
 
-=item C<DISALLOWED>
+=item C<BIDIRULE_AVOIDED>
+
+=item C<BIDIRULE_DISALLOWED>
 
 検査の結果。
-C<UNKNOWN>は、文字列が空で表示方向を特定できなかったことを示す。
+C<BIDIRULE_UNKNOWN>は、文字列が空で表示方向を特定できなかったことを示す。
+C<BIDIRULE_AVOIDED>は、認められなかったキャラクタが表示方向の制御に用いられるものであるため、表示すると問題が起こるかもしれないことを示す。
 
 =back
 
@@ -129,7 +138,7 @@ check()はEBCDICプラットフォームでのユニコード文字列を検査�
 =item *
 
 LDHラベル (ASCIIの図形文字のみから成る文字列)
-はBiDi規則を満たさなくてもよい。ほかの規則で検査すべきである。
+は、BiDi規則をかならずしも満たさない。別の規則で検査すべきである。
 
 =back
 

@@ -8,13 +8,18 @@ require Exporter;
 
 our @ISA = qw(Exporter);
 
-our %EXPORT_TAGS = ( 'all' => [ qw(check UNKNOWN LTR RTL DISALLOWED) ] );
+our %EXPORT_TAGS = (
+    'all' => [
+        qw(check BIDIRULE_UNKNOWN BIDIRULE_LTR BIDIRULE_RTL
+           BIDIRULE_AVOIDED BIDIRULE_DISALLOWED)
+    ]
+);
 
 our @EXPORT_OK = @{$EXPORT_TAGS{'all'}};
 
-our $VERSION = '0.000_02';
+our $VERSION    = '0.01';
 our $XS_VERSION = $VERSION;
-$VERSION = eval $VERSION;  # see L<perlmodstyle>
+$VERSION = eval $VERSION;    # see L<perlmodstyle>
 
 require XSLoader;
 XSLoader::load('Unicode::BiDiRule', $XS_VERSION);
@@ -65,8 +70,8 @@ as UTF-8 sequence.
 Returns:
 
 In scalar context:
-Direction of string, C<UNKNOWN> (C<0>), C<LTR> or C<RTL>,
-if it satisfys the rule.
+Direction of string, C<BIDIRULE_UNKNOWN> (C<0>), C<BIDIRULE_LTR> or
+C<BIDIRULE_RTL>, if it satisfys the rule.
 Otherwise C<undef>.
 
 In array context:
@@ -92,6 +97,7 @@ When the check fails, length of disallowed substring.
 
 Length is based on byte for bytestring,
 and based on character for Unicode string.
+It is undefined for invalid sequence.
 
 =item C<ord>
 
@@ -100,23 +106,32 @@ when C<length> item is set.
 
 =back
 
+=item Unicode::BiDiRule::UnicodeVersion()
+
+Returns the version of the Unicode Character Database.
+It should be the same as Unicode::UCD::UnicodeVersion().
+
 =back
 
 =head2 Constants
 
 =over
 
-=item C<UNKNOWN>
+=item C<BIDIRULE_UNKNOWN>
 
-=item C<LTR>
+=item C<BIDIRULE_LTR>
 
-=item C<RTL>
+=item C<BIDIRULE_RTL>
 
-=item C<DISALLOWED>
+=item C<BIDIRULE_AVOIDED>
+
+=item C<BIDIRULE_DISALLOWED>
 
 Possible results of checking.
-C<UNKNOWN> indicates that string was empty and its direction was not
+C<BIDIRULE_UNKNOWN> indicates that string was empty and its direction was not
 determined.
+C<BIDIRULE_AVOIDED> indicates disallowed characters are used for explicit
+dictionality formatting so that they can cause problem to display.
 
 =back
 
@@ -157,7 +172,7 @@ Table below lists implemented Unicode version by each Perl version.
 =item *
 
 LDH labels, strings consisting of ASCII graphic characters only,
-may not satisfy BiDi Rule.
+may not always satisfy BiDi Rule.
 They should be checked using another rule.
 
 =back

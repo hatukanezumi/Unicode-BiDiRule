@@ -8,13 +8,22 @@
 
 MODULE = Unicode::BiDiRule		PACKAGE = Unicode::BiDiRule		
 
+char *
+UnicodeVersion()
+    PROTOTYPE:
+    CODE:
+	RETVAL = BIDIRULE_UNICODE_VERSION;
+    OUTPUT:
+	RETVAL
+
 int
 _propname()
     ALIAS:
-	UNKNOWN    = 0
-	LTR        = BDR_LTR
-	RTL        = BDR_RTL
-	DISALLOWED = BDR_DISALLOWED
+	BIDIRULE_UNKNOWN    = 0
+	BIDIRULE_LTR        = BDR_LTR
+	BIDIRULE_RTL        = BDR_RTL
+	BIDIRULE_AVOIDED    = BDR_AVOIDED
+	BIDIRULE_DISALLOWED = BDR_DISALLOWED
     CODE:
 	RETVAL = ix;
     OUTPUT:
@@ -40,11 +49,15 @@ check(string)
 	case G_SCALAR:
 	    retval = bidirule_check((U8 *)buf, buflen,
 		NULL, NULL, NULL, NULL, NULL);
-	    if (retval != BDR_DISALLOWED) {
+	    switch (retval) {
+	    case BDR_AVOIDED:
+	    case BDR_DISALLOWED:
+		XSRETURN_EMPTY;
+
+	    default:
 		XPUSHs(sv_2mortal(newSViv(retval)));
 		XSRETURN(1);
-	    } else
-		XSRETURN_EMPTY;
+	    }
 
 	case G_ARRAY:
 	    retval = bidirule_check((U8 *)buf, buflen,
@@ -56,7 +69,8 @@ check(string)
 		XPUSHs(sv_2mortal(newSViv(idx)));
 	    else
 		XPUSHs(sv_2mortal(newSViv(err - (U8 *)buf)));
-	    if (retval != BDR_DISALLOWED || errlen == 0)
+	    if ((retval != BDR_DISALLOWED && retval != BDR_AVOIDED)
+		|| errlen == 0)
 		XSRETURN(4);
 
 	    XPUSHs(sv_2mortal(newSVpv("length", 0)));

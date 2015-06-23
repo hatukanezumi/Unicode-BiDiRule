@@ -1,5 +1,16 @@
 Revision history for Perl extension Unicode::BiDiRule.
 
+0.01  Tue Jun 23 2015
+! bidirule.c
+! BiDiRule.xs
+! Makefile.PL
+! data/bidirule.pl
+! lib/POD2/JA/Unicode/BiDiRule.pod
+! lib/Unicode/BiDiRule.pm
+! t/00use.t
++ t/01flodhast.t
+  - Adding some tests for normal cases.
+
 0.000_02  Sun Jun 21 2015
 ! Makefile.PL
 ! bidirule.c

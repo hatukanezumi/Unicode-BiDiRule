@@ -12,9 +12,6 @@
  * warranty of merchantability or fitness for a particular purpose.
  */
 
-#include "EXTERN.h"
-#include "perl.h"
-
 typedef enum {
     BDR_LTR = 1,
     BDR_RTL,			/* R, AL */
@@ -22,8 +19,12 @@ typedef enum {
     BDR_EN,
     BDR_VALID,			/* ES, CS, ET, ON, BN */
     BDR_NSM,
+    BDR_AVOIDED,		/* Explicit Formatting: LRE etc. */
     BDR_DISALLOWED		/* Others */
 } bidirule_prop_t;
+
+/* Line below is automatically generated.  Don't edit it manually. */
+#define BIDIRULE_UNICODE_VERSION
 
 /* Line below is automatically generated.  Don't edit it manually. */
 #define BIDIRULE_BLKWIDTH
@@ -273,5 +274,5 @@ static STRLEN bidirule_check(U8 * buf, const STRLEN buflen,
 	*idxptr = ctx.idx;
     if (cpptr != NULL)
 	*cpptr = ctx.cp;
-    return BDR_DISALLOWED;
+    return (prop == BDR_AVOIDED) ? BDR_AVOIDED : BDR_DISALLOWED;
 }

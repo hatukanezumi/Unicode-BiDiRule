@@ -21,6 +21,8 @@ if ($init) {
         or die;
     $source =~ s/\b(bidirule_prop_array[[][]]\s*=\s*[{]).*?([}])/$1\n\n$2/s
         or die;
+    $source =~ s/(#define\s+BIDIRULE_UNICODE_VERSION)\b.*/$1/
+        or die;
 } else {
     open $debugfh, '>', 'propmaps.txt' if $ENV{DEBUG};
     my ($bidi_index, $bidi_array) = build_bidi_map();
@@ -32,6 +34,9 @@ if ($init) {
         or die;
     $source =~
         s/\b(bidirule_prop_array[[][]]\s*=\s*[{]).*?([}])/$1\n$bidi_array\n$2/s
+        or die;
+    $source =~
+        s/(#define\s+BIDIRULE_UNICODE_VERSION)\b.*/sprintf '%s "%s"', $1, Unicode::UCD::UnicodeVersion()/e
         or die;
 }
 
@@ -84,7 +89,9 @@ sub build_bidi_map {
                 : ($property =~ /\A(R|AL)\z/)           ? "BDR_RTL"
                 : ($property =~ /\A(ES|CS|ET|ON|BN)\z/) ? "BDR_VALID"
                 : ($property =~ /\A(AN|EN|NSM)\z/)      ? "BDR_$property"
-                :                                         "BDR_DISALLOWED";
+                : ($property =~ /\A(LRE|LRO|RLE|RLO|PDF|RLI|LRI|FSI|PDI)\z/)
+                ? "BDR_AVOIDED"
+                : "BDR_DISALLOWED";
         } elsif (0x0600 <= $c and $c <= 0x07BF
             or 0x08A0 <= $c   and $c <= 0x08FF
             or 0xFB50 <= $c   and $c <= 0xFDCF
