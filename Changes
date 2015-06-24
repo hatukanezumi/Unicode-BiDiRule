@@ -1,5 +1,12 @@
 Revision history for Perl extension Unicode::BiDiRule.
 
+0.01.1  Wed Jun 24 2015
+- bidirule.c
+! BiDiRule.xs
+! Makefile.PL
++ unicode_bidirule.c
+  - CPAN RT#105450: Case-sensitive file systems are assumed.
+
 0.01  Tue Jun 23 2015
 ! bidirule.c
 ! BiDiRule.xs

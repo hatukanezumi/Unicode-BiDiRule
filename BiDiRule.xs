@@ -4,7 +4,7 @@
 
 #include "ppport.h"
 
-#include "bidirule.c"
+#include "unicode_bidirule.c"
 
 MODULE = Unicode::BiDiRule		PACKAGE = Unicode::BiDiRule		
 
