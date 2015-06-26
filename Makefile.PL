@@ -2,6 +2,7 @@ use 5.008;
 
 package MY;
 use ExtUtils::MakeMaker;
+use Unicode::UCD;
 
 WriteMakefile(
     NAME               => 'Unicode::BiDiRule',
@@ -38,7 +39,15 @@ sub clean {
     $inherited;
 }
 
+sub test {
+    my $inherited = shift->SUPER::test(@_);
+    $inherited =~ s/^(test[ \t]*:+[ \t]*)/${1}unidata /m;
+    $inherited;
+}
+
 sub postamble {
+    my $UnicodeVersion = Unicode::UCD::UnicodeVersion();
+
     return <<"EOF";
 BiDiRule.c: stamp-c
 
@@ -53,6 +62,13 @@ clean-c:
 preop:
 \t\$(PERL) data/bidirule.pl --init \$(DISTVNAME)/unicode_bidirule.c
 \t\$(RM_F) \$(DISTVNAME)/unicode_bidirule.c.old
+
+unidata:
+\tcd t; \\
+\t[ -f IdnaTest-$UnicodeVersion.txt ] || \\
+\twget -q -N -O IdnaTest-$UnicodeVersion.txt \\
+\tftp://unicode.org/Public/idna/$UnicodeVersion/IdnaTest*.txt \\
+\t|| \$(NOOP)
 
 EOF
 }

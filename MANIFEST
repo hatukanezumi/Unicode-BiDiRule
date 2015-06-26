@@ -9,5 +9,6 @@ ppport.h
 README
 t/00use.t
 t/01flodhast.t
+t/02IdnaTest.t
 t/pod.t
 unicode_bidirule.c

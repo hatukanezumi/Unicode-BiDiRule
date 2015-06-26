@@ -17,7 +17,7 @@ our %EXPORT_TAGS = (
 
 our @EXPORT_OK = @{$EXPORT_TAGS{'all'}};
 
-our $VERSION    = '0.01.1';
+our $VERSION    = '0.01.2';
 our $XS_VERSION = $VERSION;
 $VERSION = eval $VERSION;    # see L<perlmodstyle>
 
@@ -46,7 +46,7 @@ RFC 5893.
 
 Note that the word "UTF-8" in this document is used in its proper meaning.
 
-=head1 Function
+=head2 Function
 
 =over
 

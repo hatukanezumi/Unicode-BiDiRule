@@ -5,14 +5,18 @@ use Unicode::UCD;
 
 use constant BIDIRULE_BLKWIDTH => 6;
 
+my $fh;
 my $debugfh;
 my $init;
+my $source;
 my $source_file = shift;
 if ($source_file and $source_file eq '--init') {
     $init        = 1;
     $source_file = shift;
 }
-my $source = do { local @ARGV = $source_file; local $/; <> };
+open $fh, '<', $source_file or die $!;
+$source = do { local $/; <$fh> };
+close $fh;
 
 if ($init) {
     $source =~ s/(#define\s+BIDIRULE_BLKWIDTH)\b.*/$1/
@@ -42,7 +46,7 @@ if ($init) {
 
 unlink "$source_file.old";
 rename $source_file, "$source_file.old" or die $!;
-open my $fh, '>', $source_file or die $!;
+open $fh, '>', $source_file or die $!;
 print $fh $source;
 close $fh;
 
@@ -75,7 +79,6 @@ sub isDICP {
 
 sub build_bidi_map {
     my @PROPS = ();
-    my $fh;
 
     print STDERR 'Loading property';
     for (my $c = 0x0; $c < 0x020000; $c++) {

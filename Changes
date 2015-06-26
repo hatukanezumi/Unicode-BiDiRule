@@ -1,5 +1,12 @@
 Revision history for Perl extension Unicode::BiDiRule.
 
+0.01.2  Fri Jun 26 2015
+! data/bidirule.pl
+  - Fix: Windows: Renaming file fails due to lock on opened file.
+! Makefile.PL
++ t/02IdnaTest.t
+  - Adding tests.
+
 0.01.1  Wed Jun 24 2015
 - bidirule.c
 ! BiDiRule.xs

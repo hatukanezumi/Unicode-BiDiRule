@@ -16,7 +16,7 @@ L<Unicode::BiDiRule> は、RFC 5893に述べるBiDi規則にしたがって検�
 
 なお当ドキュメントでは、「UTF-8」という語を本来の意味で用いる。
 
-=head1 Function
+=head2 Function
 
 =over
 
