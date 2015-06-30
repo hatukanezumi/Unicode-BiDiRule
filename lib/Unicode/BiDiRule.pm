@@ -10,14 +10,14 @@ our @ISA = qw(Exporter);
 
 our %EXPORT_TAGS = (
     'all' => [
-        qw(check BIDIRULE_UNKNOWN BIDIRULE_LTR BIDIRULE_RTL
-           BIDIRULE_AVOIDED BIDIRULE_DISALLOWED)
+        qw(check BIDIRULE_NOTBIDI BIDIRULE_LTR BIDIRULE_RTL
+           BIDIRULE_AVOIDED BIDIRULE_INVALID)
     ]
 );
 
 our @EXPORT_OK = @{$EXPORT_TAGS{'all'}};
 
-our $VERSION    = '0.01.2';
+our $VERSION    = '0.02';
 our $XS_VERSION = $VERSION;
 $VERSION = eval $VERSION;    # see L<perlmodstyle>
 
@@ -70,9 +70,8 @@ as UTF-8 sequence.
 Returns:
 
 In scalar context:
-Direction of string, C<BIDIRULE_UNKNOWN> (C<0>), C<BIDIRULE_LTR> or
-C<BIDIRULE_RTL>, if it satisfys the rule.
-Otherwise C<undef>.
+Any of C<BIDIRULE_RTL>, C<BIDIRULE_LTR> and C<BIDIRULE_NOTBIDI>
+(see L</Constants>), or C<undef>.
 
 In array context:
 A list of pairs describing detail of result with these keys:
@@ -115,23 +114,31 @@ It should be the same as Unicode::UCD::UnicodeVersion().
 
 =head2 Constants
 
+Possible results of checking.
+
 =over
-
-=item C<BIDIRULE_UNKNOWN>
-
-=item C<BIDIRULE_LTR>
 
 =item C<BIDIRULE_RTL>
 
+String is RTL label.
+
+=item C<BIDIRULE_LTR>
+
+String is LTR label.
+
+=item C<BIDIRULE_NOTBIDI> (C<0>)
+
+String does not contain right-to-left characters,
+but is not BiDi label, neither RTL label nor LTR label.
+
 =item C<BIDIRULE_AVOIDED>
 
-=item C<BIDIRULE_DISALLOWED>
+String does not satisfy BiDi Rule because it contains formatting character.
+Disallowed character can cause problem to display.
 
-Possible results of checking.
-C<BIDIRULE_UNKNOWN> indicates that string was empty and its direction was not
-determined.
-C<BIDIRULE_AVOIDED> indicates disallowed characters are used for explicit
-dictionality formatting so that they can cause problem to display.
+=item C<BIDIRULE_INVALID>
+
+String does not satisfy BiDi Rule by the other reason.
 
 =back
 
@@ -171,9 +178,8 @@ Table below lists implemented Unicode version by each Perl version.
 
 =item *
 
-LDH labels, strings consisting of ASCII graphic characters only,
-may not always satisfy BiDi Rule.
-They should be checked using another rule.
+The string which is not BiDi label, neither RTL label nor LTR label,
+may not always be invalid.  It should be checked by another rule.
 
 =back
 

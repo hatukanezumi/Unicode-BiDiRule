@@ -39,18 +39,16 @@ UTF-8列として扱われることに注意。
 
 Returns:
 
-スカラコンテキストでは、
-規則を満たせば文字列の表示方向 (C<BIDIRULE_UNKNOWN>
-(C<0>)、C<BIDIRULE_LTR>、C<BIDIRULE_RTL>)。そうでなければC<undef>。
+スカラコンテキストでは、C<BIDIRULE_RTL>、C<BIDIRULE_LTR>、C<BIDIRULE_NOTBIDI>
+のいずれか (L</Constants> を参照)、あるいはC<undef>を返す。
 
-配列コンテキストでは、
-次のキーを持つ対によるリストで結果の詳細を返す。
+配列コンテキストでは、次のキーを持つ対によるリストで結果の詳細を返す。
 
 =over
 
 =item C<result>
 
-L</Constants>で述べる値のいずれか。
+L</Constants> で述べる値のいずれか。
 
 =item C<offset>
 
@@ -83,21 +81,30 @@ Unicode::UCD::UnicodeVersion() と同じであるはずである。
 
 =head2 Constants
 
+検査の結果。
+
 =over
-
-=item C<BIDIRULE_UNKNOWN>
-
-=item C<BIDIRULE_LTR>
 
 =item C<BIDIRULE_RTL>
 
+文字列はRTLラベルである。
+
+=item C<BIDIRULE_LTR>
+
+文字列はLTRラベルである。
+
+=item C<BIDIRULE_NOTBIDI> (C<0>)
+
+文字列は右書きのキャラクタを含まないが、BiDiラベルではない
+(RTLラベルでもLTRラベルでもない)。
+
 =item C<BIDIRULE_AVOIDED>
 
-=item C<BIDIRULE_DISALLOWED>
+文字列は書式文字を含むため、BiDi規則を満たさない。認められなかったキャラクタを表示すると問題が起きるかもしれない。
 
-検査の結果。
-C<BIDIRULE_UNKNOWN>は、文字列が空で表示方向を特定できなかったことを示す。
-C<BIDIRULE_AVOIDED>は、認められなかったキャラクタが表示方向の制御に用いられるものであるため、表示すると問題が起こるかもしれないことを示す。
+=item C<BIDIRULE_INVALID>
+
+文字列はその他の理由でBiDi規則を満たさない。
 
 =back
 
@@ -137,8 +144,8 @@ check()はEBCDICプラットフォームでのユニコード文字列を検査�
 
 =item *
 
-LDHラベル (ASCIIの図形文字のみから成る文字列)
-は、BiDi規則をかならずしも満たさない。別の規則で検査すべきである。
+BiDiラベルではない文字列 (RTLラベルでもLTRラベルでもない文字列)
+が無効な文字列であるとはかぎらない。別の規則で検査すべきである。
 
 =back
 

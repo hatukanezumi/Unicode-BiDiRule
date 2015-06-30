@@ -94,7 +94,7 @@ sub build_bidi_map {
                 : ($property =~ /\A(AN|EN|NSM)\z/)      ? "BDR_$property"
                 : ($property =~ /\A(LRE|LRO|RLE|RLO|PDF|RLI|LRI|FSI|PDI)\z/)
                 ? "BDR_AVOIDED"
-                : "BDR_DISALLOWED";
+                : "BDR_INVALID";
         } elsif (0x0600 <= $c and $c <= 0x07BF
             or 0x08A0 <= $c   and $c <= 0x08FF
             or 0xFB50 <= $c   and $c <= 0xFDCF

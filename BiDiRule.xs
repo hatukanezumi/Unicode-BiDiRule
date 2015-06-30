@@ -19,11 +19,11 @@ UnicodeVersion()
 int
 _propname()
     ALIAS:
-	BIDIRULE_UNKNOWN    = 0
-	BIDIRULE_LTR        = BDR_LTR
-	BIDIRULE_RTL        = BDR_RTL
-	BIDIRULE_AVOIDED    = BDR_AVOIDED
-	BIDIRULE_DISALLOWED = BDR_DISALLOWED
+	BIDIRULE_NOTBIDI = 0
+	BIDIRULE_LTR     = BDR_LTR
+	BIDIRULE_RTL     = BDR_RTL
+	BIDIRULE_AVOIDED = BDR_AVOIDED
+	BIDIRULE_INVALID = BDR_INVALID
     CODE:
 	RETVAL = ix;
     OUTPUT:
@@ -51,7 +51,7 @@ check(string)
 		NULL, NULL, NULL, NULL, NULL);
 	    switch (retval) {
 	    case BDR_AVOIDED:
-	    case BDR_DISALLOWED:
+	    case BDR_INVALID:
 		XSRETURN_EMPTY;
 
 	    default:
@@ -69,7 +69,7 @@ check(string)
 		XPUSHs(sv_2mortal(newSViv(idx)));
 	    else
 		XPUSHs(sv_2mortal(newSViv(err - (U8 *)buf)));
-	    if ((retval != BDR_DISALLOWED && retval != BDR_AVOIDED)
+	    if ((retval != BDR_INVALID && retval != BDR_AVOIDED)
 		|| errlen == 0)
 		XSRETURN(4);
 

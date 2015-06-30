@@ -1,5 +1,5 @@
 /*
- * Unicode-Precis-Preparation
+ * Unicode-BiDiRule
  *
  * Copyright (C) 2015 by Hatuka*nezumi - IKEDA Soji
  *
@@ -19,8 +19,8 @@ typedef enum {
     BDR_EN,
     BDR_VALID,			/* ES, CS, ET, ON, BN */
     BDR_NSM,
-    BDR_AVOIDED,		/* Explicit Formatting: LRE etc. */
-    BDR_DISALLOWED		/* Others */
+    BDR_AVOIDED,		/* Explicit formatting: LRE etc. */
+    BDR_INVALID			/* B, S, WS  */
 } bidirule_prop_t;
 
 /* Line below is automatically generated.  Don't edit it manually. */
@@ -44,7 +44,7 @@ static U8 bidirule_prop_lookup(U32 cp)
     if ((0x0E0000 <= cp && cp <= 0x0E0FFF) || (cp & 0x00FFFE) == 0x00FFFE)
 	return BDR_VALID;	/* BN */
     else if (0x10FFFF < cp)
-	return BDR_DISALLOWED;
+	return BDR_INVALID;
     else if (0x020000 <= cp)
 	return BDR_LTR;		/* L */
 
@@ -149,10 +149,10 @@ static STRLEN bidirule_check(U8 * buf, const STRLEN buflen,
 		*idxptr = idx;
 	    if (cpptr != NULL)
 		*cpptr = 0;
-	    return BDR_DISALLOWED;
+	    return BDR_INVALID;
 	}			/* switch (len) */
 
-	/* Resolve BiDi rule. */
+	/* Checking by BiDi Rule. */
 
 	prop = bidirule_prop_lookup(cp);
 
@@ -163,17 +163,27 @@ static STRLEN bidirule_check(U8 * buf, const STRLEN buflen,
 	    ctx.idx = idx;
 	    ctx.cp = cp;
 
+	    /* 1. */
 	    switch (prop) {
 	    case BDR_RTL:
 		direction = BDR_RTL;
+		break;
+
+	    case BDR_AN:
+		goto invalid;
+
+	    case BDR_EN:
+	    case BDR_VALID:
+		/* Unknown direction. */
 		break;
 
 	    case BDR_LTR:
 		direction = BDR_LTR;
 		break;
 
-	    default:
-		goto disallowed;
+	    default: /* NSM, AVOIDED or INVALID */
+		/* Unknown direction. */
+		break;
 	    }
 	} else if (prop == BDR_NSM) {
 	    prop = prop_before;
@@ -187,39 +197,46 @@ static STRLEN bidirule_check(U8 * buf, const STRLEN buflen,
 	    ctx.cp = cp;
 
 	    switch (prop) {
-	    case BDR_VALID:
+	    case BDR_RTL:
+		/* 2. */
+		if (direction != BDR_RTL)
+		    goto invalid;
 		break;
 
-	    case BDR_RTL:
-		if (direction == BDR_RTL)
-		    break;
-		else
-		    goto disallowed;
-
 	    case BDR_AN:
+		/* 2., 4. */
 		if (has_en)
-		    goto disallowed;
-		else if (direction == BDR_RTL)
-		    has_an = 1;
+		    goto invalid;
+		else if (direction != BDR_RTL)
+		    goto invalid;
 		else
-		    goto disallowed;
+		    has_an = 1;
 		break;
 
 	    case BDR_EN:
+		/* 2., 4., 5. */
 		if (has_an)
-		    goto disallowed;
+		    goto invalid;
 		else
 		    has_en = 1;
 		break;
 
-	    case BDR_LTR:
-		if (direction == BDR_LTR)
-		    break;
-		else
-		    goto disallowed;
+	    case BDR_VALID:
+		/* 2., 5. */
+		break;
 
-	    default:
-		goto disallowed;
+	    case BDR_LTR:
+		/* 2., 5. */
+		if (direction == BDR_RTL)
+		    goto invalid;
+		break;
+
+	    default: /* AVOIDED or INVALID */
+		if (direction == BDR_RTL)
+		    goto invalid;
+		else
+		    direction = 0;
+		break;
 	    }			/* switch (prop) */
 	}			/* if (prop_before == 0) */
 
@@ -237,23 +254,26 @@ static STRLEN bidirule_check(U8 * buf, const STRLEN buflen,
 
     switch (direction) {
     case BDR_RTL:
+	/* 3. */
 	switch (prop) {
 	case BDR_RTL:
 	case BDR_EN:
 	case BDR_AN:
 	    break;
 	default:
-	    goto disallowed;
+	    goto invalid;
 	}
 	break;
 
     case BDR_LTR:
+	/* 6. */
 	switch (prop) {
 	case BDR_LTR:
 	case BDR_EN:
 	    break;
 	default:
-	    goto disallowed;
+	    direction = 0;
+	    break;
 	}
 	break;
     }
@@ -263,7 +283,7 @@ static STRLEN bidirule_check(U8 * buf, const STRLEN buflen,
 	*idxptr = idx;
     return direction;
 
-  disallowed:
+  invalid:
     if (pptr != NULL)
 	*pptr = ctx.p;
     if (lenptr != NULL)
@@ -274,5 +294,8 @@ static STRLEN bidirule_check(U8 * buf, const STRLEN buflen,
 	*idxptr = ctx.idx;
     if (cpptr != NULL)
 	*cpptr = ctx.cp;
-    return (prop == BDR_AVOIDED) ? BDR_AVOIDED : BDR_DISALLOWED;
+
+    if (prop == BDR_AVOIDED)
+	return BDR_AVOIDED;
+    return BDR_INVALID;
 }
