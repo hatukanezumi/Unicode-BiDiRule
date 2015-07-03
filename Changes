@@ -1,6 +1,6 @@
 Revision history for Perl extension Unicode::BiDiRule.
 
-0.02  Xxx Xxx XX 2015
+0.02  Sat Jul 04 2015
 ! BiDiRule.xs
 ! data/bidirule.pl
 ! lib/POD2/JA/Unicode/BiDiRule.pod
@@ -12,6 +12,7 @@ Revision history for Perl extension Unicode::BiDiRule.
   - BIDIRULE_NOTBIDI is returned if BiDi Rule is unsuited for given string,
     namely, string does not contain right-to-left characters and does not
     satisfy BiDi Rule.
+  - check(): New strict option enabled by default.
 
 0.01.2  Fri Jun 26 2015
 ! data/bidirule.pl
