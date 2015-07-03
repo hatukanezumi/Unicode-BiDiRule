@@ -22,7 +22,6 @@ _propname()
 	BIDIRULE_NOTBIDI = 0
 	BIDIRULE_LTR     = BDR_LTR
 	BIDIRULE_RTL     = BDR_RTL
-	BIDIRULE_AVOIDED = BDR_AVOIDED
 	BIDIRULE_INVALID = BDR_INVALID
     CODE:
 	RETVAL = ix;
@@ -30,9 +29,10 @@ _propname()
 	RETVAL
 
 void
-check(string)
+check(string, strict = 1)
 	SV *string
-    PROTOTYPE: $
+	int strict
+    PROTOTYPE: $;$
     PREINIT:
 	char *buf;
 	U8 *err;
@@ -48,7 +48,7 @@ check(string)
 	switch (GIMME_V) {
 	case G_SCALAR:
 	    retval = bidirule_check((U8 *)buf, buflen,
-		NULL, NULL, NULL, NULL, NULL);
+		NULL, NULL, NULL, NULL, NULL, strict);
 	    switch (retval) {
 	    case BDR_AVOIDED:
 	    case BDR_INVALID:
@@ -61,16 +61,18 @@ check(string)
 
 	case G_ARRAY:
 	    retval = bidirule_check((U8 *)buf, buflen,
-		&err, &errlen, &errulen, &idx, &cp);
+		&err, &errlen, &errulen, &idx, &cp, strict);
 	    XPUSHs(sv_2mortal(newSVpv("result", 0)));
-	    XPUSHs(sv_2mortal(newSViv(retval)));
+	    XPUSHs(sv_2mortal(newSViv(
+		(retval == BDR_AVOIDED) ? BDR_INVALID : retval)));
 	    XPUSHs(sv_2mortal(newSVpv("offset", 0)));
 	    if (SvUTF8(string))
 		XPUSHs(sv_2mortal(newSViv(idx)));
 	    else
 		XPUSHs(sv_2mortal(newSViv(err - (U8 *)buf)));
-	    if ((retval != BDR_INVALID && retval != BDR_AVOIDED)
-		|| errlen == 0)
+	    if (errlen == 0)
+		XSRETURN(4);
+	    if (retval != BDR_INVALID && retval != BDR_AVOIDED)
 		XSRETURN(4);
 
 	    XPUSHs(sv_2mortal(newSVpv("length", 0)));
@@ -80,8 +82,12 @@ check(string)
 		XPUSHs(sv_2mortal(newSViv(errlen)));
 	    XPUSHs(sv_2mortal(newSVpv("ord", 0)));
 	    XPUSHs(sv_2mortal(newSViv(cp)));
-	    XSRETURN(8);
+	    if (retval != BDR_AVOIDED)
+		XSRETURN(8);
 
+	    XPUSHs(sv_2mortal(newSVpv("unsafe", 0)));
+	    XPUSHs(sv_2mortal(newSViv(1)));
+	    XSRETURN(10);
 	default:
 	    XSRETURN_EMPTY;
 	}

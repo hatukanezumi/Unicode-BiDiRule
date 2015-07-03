@@ -10,9 +10,7 @@ our @ISA = qw(Exporter);
 
 our %EXPORT_TAGS = (
     'all' => [
-        qw(check BIDIRULE_NOTBIDI BIDIRULE_LTR BIDIRULE_RTL
-           BIDIRULE_AVOIDED BIDIRULE_INVALID)
-    ]
+        qw(check BIDIRULE_RTL BIDIRULE_LTR BIDIRULE_NOTBIDI BIDIRULE_INVALID)]
 );
 
 our @EXPORT_OK = @{$EXPORT_TAGS{'all'}};
@@ -46,11 +44,11 @@ RFC 5893.
 
 Note that the word "UTF-8" in this document is used in its proper meaning.
 
-=head2 Function
+=head2 Functions
 
 =over
 
-=item check ( $string )
+=item check ( $string, [ $strict ] )
 
 Check if a string satisfys BiDi Rule.
 
@@ -65,12 +63,30 @@ A string to be checked, Unicode string or bytestring.
 Note that bytestring won't be upgraded to Unicode string but will be treated
 as UTF-8 sequence.
 
+=item $strict
+
+If C<0> is specified, won't perform following checks if the string does not
+contain right-to-left characters and is not BiDi label:
+
+=over
+
+=item *
+
+String does not begin with nonspacing mark.
+
+=item *
+
+String does not contain formatting characters, space characters and
+line separators.
+
+=back
+
 =back
 
 Returns:
 
 In scalar context:
-Any of C<BIDIRULE_RTL>, C<BIDIRULE_LTR> and C<BIDIRULE_NOTBIDI>
+One of C<BIDIRULE_RTL>, C<BIDIRULE_LTR> and C<BIDIRULE_NOTBIDI>
 (see L</Constants>), or C<undef>.
 
 In array context:
@@ -103,6 +119,11 @@ It is undefined for invalid sequence.
 Unicode scalar value of the first character of substring,
 when C<length> item is set.
 
+=item C<unsafe>
+
+If disallowed substring contains formatting character, true value is set.
+Such character can cause problem to display.
+
 =back
 
 =item Unicode::BiDiRule::UnicodeVersion()
@@ -128,17 +149,12 @@ String is LTR label.
 
 =item C<BIDIRULE_NOTBIDI> (C<0>)
 
-String does not contain right-to-left characters,
-but is not BiDi label, neither RTL label nor LTR label.
-
-=item C<BIDIRULE_AVOIDED>
-
-String does not satisfy BiDi Rule because it contains formatting character.
-Disallowed character can cause problem to display.
+String does not contain right-to-left characters but is not BiDi label,
+neither RTL label nor LTR label.
 
 =item C<BIDIRULE_INVALID>
 
-String does not satisfy BiDi Rule by the other reason.
+String does not satisfy the rule.
 
 =back
 

@@ -15,8 +15,8 @@ my $testfile;
 BEGIN {
     my $UnicodeVersion = Unicode::BiDiRule::UnicodeVersion();
     if (open my $fh, '<:utf8', "t/IdnaTest-$UnicodeVersion.txt") {
-	$testfile = <$fh>;
-	$testfile .= <$fh>;
+        $testfile = <$fh>;
+        $testfile .= <$fh>;
         while (<$fh>) {
             chomp $_;
             s/#.*//;
@@ -28,7 +28,7 @@ BEGIN {
             $toUnicode =~ s/\\u([0-9A-F]{4})/pack 'U', hex "0x$1"/egi;
 
             $source =~ s/[\x{FF0E}\x{3002}\x{FF61}]/./g;
-            next if $source =~ /[.]/;                 # Multiple lables
+            next if $source =~ /[.]/;            # Multiple lables
             #next if $source =~ /\A[\x21-\x7E]+\z/;    # LDH labels
             #next if $source =~ /\A[0-9]/;             # Beginning with digits
             #next if $source =~ /(?:\x{200C}|\x{200D}|\p{Bidi_Class:ON})\z/;
@@ -56,13 +56,15 @@ foreach my $test (@TESTS) {
     my ($expected, $lineno, $type, $source) = @$test;
     my $result = check($source);
     if ($expected) {
-        ok( defined $result,
-            sprintf '%d: result=%s; type=%s; %s',
-            $lineno, (defined $result ? $result : 'undef'), $type, escape_string($source)
+        ok( defined $result, sprintf '%d: result=%s; type=%s; %s',
+            $lineno, (defined $result ? $result : 'undef'),
+            $type, escape_string($source)
         );
     } else {
-        ok(!defined $result, sprintf '%d: result=undef; type=%s; %s',
-            $lineno, $type, escape_string($source));
+        ok( !defined $result,
+            sprintf '%d: result=undef; type=%s; %s',
+            $lineno, $type, escape_string($source)
+        );
     }
 }
 

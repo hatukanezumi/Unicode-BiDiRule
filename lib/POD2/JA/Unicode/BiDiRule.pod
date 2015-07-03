@@ -1,3 +1,4 @@
+
 =encoding utf-8
 
 =head1 NAME
@@ -16,11 +17,11 @@ L<Unicode::BiDiRule> は、RFC 5893に述べるBiDi規則にしたがって検�
 
 なお当ドキュメントでは、「UTF-8」という語を本来の意味で用いる。
 
-=head2 Function
+=head2 Functions
 
 =over
 
-=item check ( $string )
+=item check ( $string, [ $strict ] )
 
 文字列がBiDi規則を満たすかどうか検査する。
 
@@ -34,6 +35,21 @@ Parameters:
 
 バイト文字列は、ユニコードへアップグレードされることなく
 UTF-8列として扱われることに注意。
+
+=item $strict
+
+C<0>を指定すると、文字列が右書き文字を含まず
+BiDiラベルでないときに次の検査をしない。
+
+=over
+
+=item *
+
+文字列が前進を伴わない記号で始まらない。
+
+=item *
+
+文字列が書式文字、空白文字、行終端文字を含まない。
 
 =back
 
@@ -70,6 +86,12 @@ L</Constants> で述べる値のいずれか。
 
 C<length>がある場合、認められない部分文字列の最初のキャラクタのユニコードスカラ値。
 
+=item C<unsafe>
+
+認められなかった部分文字列が書式文字を含むときは、真値がセットされる。このようなキャラクタを表示すると問題が起きるかもしれない。
+
+=back
+
 =back
 
 =item Unicode::BiDiRule::UnicodeVersion()
@@ -95,16 +117,12 @@ Unicode::UCD::UnicodeVersion() と同じであるはずである。
 
 =item C<BIDIRULE_NOTBIDI> (C<0>)
 
-文字列は右書きのキャラクタを含まないが、BiDiラベルではない
+文字列は右書き文字を含まないがBiDiラベルではない
 (RTLラベルでもLTRラベルでもない)。
-
-=item C<BIDIRULE_AVOIDED>
-
-文字列は書式文字を含むため、BiDi規則を満たさない。認められなかったキャラクタを表示すると問題が起きるかもしれない。
 
 =item C<BIDIRULE_INVALID>
 
-文字列はその他の理由でBiDi規則を満たさない。
+文字列は規則を満たさない。
 
 =back
 
@@ -144,8 +162,8 @@ check()はEBCDICプラットフォームでのユニコード文字列を検査�
 
 =item *
 
-BiDiラベルではない文字列 (RTLラベルでもLTRラベルでもない文字列)
-が無効な文字列であるとはかぎらない。別の規則で検査すべきである。
+BiDiラベルではない (RTLラベルでもLTRラベルでもない)
+文字列が無効な文字列であるとはかぎらない。別の規則で検査すべきである。
 
 =back
 
@@ -173,4 +191,3 @@ useful, but without any warranty; without even the implied
 warranty of merchantability or fitness for a particular purpose.
 
 =cut
-

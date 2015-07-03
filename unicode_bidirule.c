@@ -74,7 +74,7 @@ static const U8 utf8_sequence_len[0x100] = {
 
 static STRLEN bidirule_check(U8 * buf, const STRLEN buflen,
 			     U8 ** pptr, STRLEN * lenptr, STRLEN * ulenptr,
-			     STRLEN * idxptr, U32 * cpptr)
+			     STRLEN * idxptr, U32 * cpptr, int strict)
 {
     U8 *p = buf;
     const U8 *end = buf + buflen;
@@ -181,7 +181,9 @@ static STRLEN bidirule_check(U8 * buf, const STRLEN buflen,
 		direction = BDR_LTR;
 		break;
 
-	    default: /* NSM, AVOIDED or INVALID */
+	    default:		/* NSM, AVOIDED or INVALID */
+		if (strict)
+		    goto invalid;
 		/* Unknown direction. */
 		break;
 	    }
@@ -231,8 +233,10 @@ static STRLEN bidirule_check(U8 * buf, const STRLEN buflen,
 		    goto invalid;
 		break;
 
-	    default: /* AVOIDED or INVALID */
+	    default:		/* AVOIDED or INVALID */
 		if (direction == BDR_RTL)
+		    goto invalid;
+		else if (strict)
 		    goto invalid;
 		else
 		    direction = 0;
@@ -295,7 +299,10 @@ static STRLEN bidirule_check(U8 * buf, const STRLEN buflen,
     if (cpptr != NULL)
 	*cpptr = ctx.cp;
 
-    if (prop == BDR_AVOIDED)
-	return BDR_AVOIDED;
-    return BDR_INVALID;
+    switch (prop) {
+    case BDR_AVOIDED:
+	return prop;
+    default:
+	return BDR_INVALID;
+    }
 }
