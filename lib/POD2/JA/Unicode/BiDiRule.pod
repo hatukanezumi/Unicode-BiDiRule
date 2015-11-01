@@ -53,6 +53,8 @@ BiDiラベルでないときに次の検査をしない。
 
 =back
 
+=back
+
 Returns:
 
 スカラコンテキストでは、C<BIDIRULE_RTL>、C<BIDIRULE_LTR>、C<BIDIRULE_NOTBIDI>
@@ -89,8 +91,6 @@ C<length>がある場合、認められない部分文字列の最初のキャ�
 =item C<unsafe>
 
 認められなかった部分文字列が書式文字を含むときは、真値がセットされる。このようなキャラクタを表示すると問題が起きるかもしれない。
-
-=back
 
 =back
 
