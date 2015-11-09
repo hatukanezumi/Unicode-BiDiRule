@@ -51,16 +51,16 @@ sub postamble {
     return <<"EOF";
 BiDiRule.c: stamp-c
 
-stamp-c: data/bidirule.pl unicode_bidirule.c
-\t\$(PERL) data/bidirule.pl unicode_bidirule.c
+stamp-c: data\$(DIRFILESEP)bidirule.pl unicode_bidirule.c
+\t\$(PERL) data\$(DIRFILESEP)bidirule.pl unicode_bidirule.c
 \t\$(TOUCH) stamp-c
 
 clean-c:
-\t\$(PERL) data/bidirule.pl --init unicode_bidirule.c
+\t\$(PERL) data\$(DIRFILESEP)bidirule.pl --init unicode_bidirule.c
 \t\$(RM_F) stamp-c
 
 preop:
-\t\$(PERL) data/bidirule.pl --init \$(DISTVNAME)/unicode_bidirule.c
+\t\$(PERL) data\$(DIRFILESEP)bidirule.pl --init \$(DISTVNAME)/unicode_bidirule.c
 \t\$(RM_F) \$(DISTVNAME)/unicode_bidirule.c.old
 
 unidata:
