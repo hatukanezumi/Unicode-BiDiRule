@@ -58,8 +58,13 @@ sub isDICP {
     eval { $ret = ($uc =~ /\A\p{Default_Ignorable_Code_Point}\z/) };
     return $ret unless $@;
 
+    # Earlier Perl 5.8.x did not support DICP class and it have to be derived
+    # from ODICP class and so on.  While recent 5.23.x deprecated ODICP class
+    # and deny it at compilation time.  So we compute ODICP class at runtime.
+    my $ODICPre = eval 'qr/\A\p{Other_Default_Ignorable_Code_Point}\z/';
+    die 'Unicode database of your Perl may be broken' unless $ODICPre;
     my $charprop = Unicode::UCD::charinfo($c);
-    if ($uc =~ /\A\p{Other_Default_Ignorable_Code_Point}\z/
+    if ($uc =~ $ODICPre
         or (    $charprop
             and %$charprop
             and $charprop->{category}
