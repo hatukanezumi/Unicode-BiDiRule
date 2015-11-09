@@ -1,5 +1,13 @@
 Revision history for Perl extension Unicode::BiDiRule.
 
+0.03  Mon Nov 09 2015
+! Makefile.PL
+  - Bug fix: Windows: "make" fails due to incompatible directory/file
+    separator.
+! data/bidirule.pl
+  - Bug fix: CPAN RT #108280: Perl around 5.23.4 rejects deprecated Unicode
+    property definition "Other_Default_Ignorable_Code_Point" in regex.
+
 0.02  Sat Jul 04 2015
 ! BiDiRule.xs
 ! data/bidirule.pl
